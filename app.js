@@ -4,6 +4,7 @@ const map = L.map('map', {
 });
 
 
+map.spin(true);
 
 
 L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_labels_under/{z}/{x}/{y}.png', {
@@ -22,6 +23,7 @@ fetch('congress.json')
         //console.log(data);
         const tileIndex = geojsonvt(data);
         createTileLayer(tileIndex);
+        //createPopups(data);
     })
     .catch(err => {
         console.log(err);
@@ -96,5 +98,24 @@ function createTileLayer(tileIndex) {
     };
     //add layer
     map.addLayer(new CanvasLayer());
+    map.spin(false);
+    
+}
+
+function createPopups(data) {
+
+    const gjn = L.geoJson(data);
+
+    gjn.eachLayer(function(layer) {
+        var props = layer.feature.properties;
+        layer.bindTooltip(props.NAMELSAD);
+        //console.log(props);
+    })
+
+    gjn.bringToFront();
+
+
+
+
 
 }
