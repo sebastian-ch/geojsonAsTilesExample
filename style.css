@@ -1,0 +1,14 @@
+html {
+    background-color: whitesmoke;
+}
+#map {
+    width: auto;
+    height: 600px;
+}
+h4,h2 {
+    font-family: 'Chakra Petch', sans-serif;
+    margin: 10px auto 10px auto;
+    text-align: center;
+    width: 600px;
+    height: 40px;
+}
