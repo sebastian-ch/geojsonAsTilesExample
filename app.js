@@ -21,9 +21,18 @@ fetch('congress.json')
     })
     .then(data => {
         //console.log(data);
-        const tileIndex = geojsonvt(data);
+        const tileOptions = {
+            maxZoom: 20, 
+            tolerance: 8, 
+            extent: 4096, 
+            buffer: 64, 
+            debug: 0, 
+            indexMaxZoom: 0, 
+            indexMaxPoints: 100000
+          };
+        const tileIndex = geojsonvt(data, tileOptions);
         createTileLayer(tileIndex);
-        //createPopups(data);
+        createPopups(data);
     })
     .catch(err => {
         console.log(err);
@@ -102,20 +111,18 @@ function createTileLayer(tileIndex) {
     
 }
 
+//uses leaflet-pip to get geojson data without adding it to map
 function createPopups(data) {
 
     const gjn = L.geoJson(data);
 
-    gjn.eachLayer(function(layer) {
-        var props = layer.feature.properties;
-        layer.bindTooltip(props.NAMELSAD);
-        //console.log(props);
+    map.on('click', function(e) {
+        const x = e.latlng.lng;
+        const y = e.latlng.lat;
+
+        const layerData = leafletPip.pointInLayer([x,y], gjn,true);
+        const popup = layerData[0].feature.properties.NAMELSAD;
+        map.openPopup(popup, e.latlng);
     })
-
-    gjn.bringToFront();
-
-
-
-
 
 }
