@@ -7,10 +7,10 @@ const map = L.map('map', {
 map.spin(true);
 
 
-L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_labels_under/{z}/{x}/{y}.png', {
+const basemap = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, &copy; <a href="https://carto.com/attributions">CARTO</a>',
     subdomains: 'abcd',
-    maxZoom: 20,
+    maxZoom: 14,
     minZoom: 0
 }).addTo(map);
 
@@ -22,17 +22,18 @@ fetch('congress.json')
     .then(data => {
         //console.log(data);
         const tileOptions = {
-            maxZoom: 20, 
-            tolerance: 8, 
-            extent: 4096, 
-            buffer: 64, 
-            debug: 0, 
-            indexMaxZoom: 0, 
+            maxZoom: 14,
+            tolerance: 8,
+            extent: 4096,
+            buffer: 64,
+            debug: 0,
+            indexMaxZoom: 0,
             indexMaxPoints: 100000
-          };
+        };
         const tileIndex = geojsonvt(data, tileOptions);
         createTileLayer(tileIndex);
-        createPopups(data);
+        //if you want popups on click, uncomment
+        //createPopups(data);
     })
     .catch(err => {
         console.log(err);
@@ -64,8 +65,8 @@ function createTileLayer(tileIndex) {
             const features = tileToRender.features;
 
             //stroke color and width
-            ctx.strokeStyle = 'red';
-            ctx.lineWidth = 0.5;
+            //ctx.strokeStyle = 'red';
+            //ctx.lineWidth = 0.5;
 
             // Iterate features
             features.forEach(feature => {
@@ -105,14 +106,15 @@ function createTileLayer(tileIndex) {
         if (index) ctx.lineTo(x + pad, y + pad)
         else ctx.moveTo(x + pad, y + pad)
     };
-    //add layer
+    
+
     map.addLayer(new CanvasLayer());
     map.spin(false);
-    
+
 }
 
 //uses leaflet-pip to get geojson data without adding it to map
-function createPopups(data) {
+ function createPopups(data) {
 
     const gjn = L.geoJson(data);
 
@@ -120,7 +122,7 @@ function createPopups(data) {
         const x = e.latlng.lng;
         const y = e.latlng.lat;
 
-        const layerData = leafletPip.pointInLayer([x,y], gjn,true);
+        const layerData = leafletPip.pointInLayer([x, y], gjn, true);
         const popup = layerData[0].feature.properties.NAMELSAD;
         map.openPopup(popup, e.latlng);
     })
